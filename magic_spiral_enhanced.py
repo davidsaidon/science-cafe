@@ -83,6 +83,7 @@ def draw_spiral(angle):
 
 
 def on_key(key):
+    '''Handle key press events.'''
     angle = ANGLE_MAP[key]
     name = SHAPE_NAMES[key]
 
