@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>✨ Magic Colour Spiral ✨</title>
+<style>
+  * { margin: 0; padding: 0; }
+  body {
+    background: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+    font-family: 'Segoe UI', sans-serif;
+  }
+  canvas { display: block; }
+  #info {
+    position: fixed;
+    bottom: 20px;
+    color: rgba(255,255,255,0.5);
+    font-size: 14px;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<div id="info">Click anywhere to restart with new colours! Press 1-4 to change shape.</div>
+<script>
+// 🎨 CHANGE THESE TO WHATEVER THE KIDS SHOUT!
+let COLOURS = ["#ff3366", "#33ccff", "#33ff99", "#ff9933", "#cc66ff", "#ffff33", "#ff66b2", "#00ffff"];
+
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let x, y, angle, step, i, angleIncrement, drawing;
+
+const SHAPES = {
+  '1': { angle: 59,  name: 'Star Spiral' },
+  '2': { angle: 91,  name: 'Square Spiral' },
+  '3': { angle: 137, name: 'Golden Spiral' },
+  '4': { angle: 72,  name: 'Flower Spiral' },
+};
+
+let currentShape = '1';
+
+function startDrawing() {
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  x = canvas.width / 2;
+  y = canvas.height / 2;
+  angle = 0;
+  step = 0;
+  i = 0;
+  angleIncrement = SHAPES[currentShape].angle;
+  drawing = true;
+  draw();
+}
+
+function draw() {
+  if (!drawing) return;
+
+  // Draw a batch of lines per frame for speed
+  for (let batch = 0; batch < 3; batch++) {
+    if (i >= 300) { drawing = false; return; }
+
+    const colour = COLOURS[i % COLOURS.length];
+    const len = i * 2;
+    const rad = (angle * Math.PI) / 180;
+    const nx = x + Math.cos(rad) * len;
+    const ny = y + Math.sin(rad) * len;
+
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(nx, ny);
+    ctx.strokeStyle = colour;
+    ctx.lineWidth = 2;
+    ctx.shadowColor = colour;
+    ctx.shadowBlur = 8;
+    ctx.stroke();
+
+    x = nx;
+    y = ny;
+    angle += angleIncrement;
+    i++;
+  }
+
+  requestAnimationFrame(draw);
+}
+
+// Click to restart with shuffled colours
+canvas.addEventListener('click', () => {
+  COLOURS = COLOURS.sort(() => Math.random() - 0.5);
+  startDrawing();
+});
+
+// Press 1-4 to change shape
+document.addEventListener('keydown', (e) => {
+  if (SHAPES[e.key]) {
+    currentShape = e.key;
+    startDrawing();
+  }
+});
+
+window.addEventListener('resize', () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  startDrawing();
+});
+
+startDrawing();
+</script>
+</body>
+</html>
