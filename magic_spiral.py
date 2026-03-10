@@ -8,7 +8,6 @@ To run: python3 magic_spiral.py
 Press Ctrl+C or close the window to stop.
 """
 
-import random
 import turtle
 
 # =============================================
